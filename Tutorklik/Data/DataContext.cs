@@ -1,5 +1,5 @@
-﻿using Hero_Api;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Tutorklik.Models;
 
 namespace Tutorklik.Data
 {

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.ExceptionServices;
 using Tutorklik.Data;
+using Tutorklik.Models;
 
 namespace Hero_Api.Controllers
 {
