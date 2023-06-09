@@ -2,7 +2,7 @@
 
 namespace Tutorklik.Models
 {
-    public class UserDto
+    public class UserRegisterDto
     {
         [Required] 
         public string UserName { get; set; }
