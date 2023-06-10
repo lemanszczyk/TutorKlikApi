@@ -21,15 +21,17 @@ namespace Tutorklik.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<List<User>>> Register(UserRegisterDto request)
         {
-            //add valiadtion unique username
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-
+            if (await _context.Users.FirstOrDefaultAsync(x => x.UserName == request.UserName))
+            {
+                return BadRequest("User with this username is exist");
+            }
             _context.Users.Add(new User()
             {
-            UserName = request.UserName,
-            PasswordHash = passwordHash,
-            Email = request.Email,
-            UserType = request.UserType
+                UserName = request.UserName,
+                PasswordHash = passwordHash,
+                Email = request.Email,
+                UserType = request.UserType
             });
 
             await _context.SaveChangesAsync();
@@ -39,13 +41,13 @@ namespace Tutorklik.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<List<User>>> Login(UserLoginDto request)
         {
-           user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == request.UserName);
-            
-           if (user == null)
+            user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == request.UserName);
+
+            if (user == null)
             {
                 return BadRequest("User not found!");
             }
-           if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             {
                 return BadRequest("Wrong password!");
             }
