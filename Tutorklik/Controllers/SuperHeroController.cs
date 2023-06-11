@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.ExceptionServices;
@@ -16,7 +17,7 @@ namespace Hero_Api.Controllers
         {
                 _context = context;
         }
-        [HttpGet]
+        [HttpGet(Name ="GetSuper"), Authorize(Roles = "Tutor")]
         public async Task<ActionResult<List<SuperHero>>> GetSuperHero()
         {
             return Ok(await _context.SuperHeroes.ToListAsync());

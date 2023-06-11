@@ -12,14 +12,12 @@ namespace Tutorklik.Models
         public string UserName { get; set; }
         public string PasswordHash { get; set; }
 
-
+        [MaxLength(50)]
         public string Email { get; set; }
-        public Role UserType {get; set;} 
 
-    }
-    public enum Role
-    {
-        Tutor,
-        Student
+        [MaxLength(20)]
+        public string UserType {get; set;}
+
+        // There are two types of User Tutor and Student
     }
 }

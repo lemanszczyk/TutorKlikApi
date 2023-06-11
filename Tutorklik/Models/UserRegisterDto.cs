@@ -20,7 +20,8 @@ namespace Tutorklik.Models
         [Compare(nameof(Password), ErrorMessage = "Password and confirmation password are not the same")] 
         public string ConfirmPassword { get; set; }
 
-        [Required] 
-        public Role UserType { get; set; }
+        [Required]
+        [MaxLength(20)]
+        public string UserType { get; set; }
     }
 }

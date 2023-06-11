@@ -1,4 +1,5 @@
 ﻿using BCrypt.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -62,11 +63,19 @@ namespace Tutorklik.Controllers
             string token = CreateToken(user);
             return Ok(token);
         }
+
+        //[HttpGet, Authorize]
+        //public ActionResult<string> GetMe()
+        //{
+        //    var userName = _context.
+        //}
         private string CreateToken(User user)
         {
+            var a = user.UserType;
             List<Claim> claims = new List<Claim>()
             {
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Role, user.UserType)
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                 _configuration.GetSection("AppSettings:Token").Value!));
