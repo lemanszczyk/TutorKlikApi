@@ -23,5 +23,7 @@ namespace Tutorklik.Models
         [Required]
         [MaxLength(20)]
         public string UserType { get; set; }
+
+        public string? ProfileImage { get; set; }
     }
 }

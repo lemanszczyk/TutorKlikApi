@@ -18,6 +18,9 @@ namespace Tutorklik.Models
         [MaxLength(20)]
         public string UserType {get; set;}
 
+        public string? ProfileImage { get; set; }
+
+
         // There are two types of User Tutor and Student
     }
 }

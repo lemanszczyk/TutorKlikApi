@@ -1,5 +1,6 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tutorklik.Models
 {
@@ -14,9 +15,8 @@ namespace Tutorklik.Models
         [Required]
         [MaxLength(5000)]
         public string AnnoucementDescription { get; set; }
-        public string Tags { get; set; }
-        public ICollection<Comment> Comments { get; set; }
-
+        public string? Tags { get; set; }
+        public List<Comment> Comments { get; set; }
         [Required]
         public User Author { get; set; }
     }
