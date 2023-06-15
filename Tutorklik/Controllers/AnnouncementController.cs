@@ -23,11 +23,21 @@ namespace Tutorklik.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<AnnouncementDto>>> GetAnnoucement()
+        [HttpGet("GetAnnouncements")]
+        public async Task<ActionResult<List<AnnouncementDto>>> GetAnnoucements()
         {
             var listOfAnnoucments = await _context.Annoucements.Include(x => x.Author).Include(x => x.Comments).ToListAsync();   
             return Ok(listOfAnnoucments.Select(x => (AnnouncementDto)x).ToList());
-        }   
+        }
+        [HttpGet("GetAnnouncement")]
+        public async Task<ActionResult<AnnouncementDto>> GetAnnoucements(int id)
+        {
+            var announcement = _context.Annoucements.Include(x  => x.Author).Include(x => x.Comments).FirstOrDefault(x => x.AnnouncementId == id);
+            if (announcement == null)
+            {
+                return BadRequest("Announcement with this id is not found");
+            }
+            return (AnnouncementDto)announcement;
+        }
     }
 }
