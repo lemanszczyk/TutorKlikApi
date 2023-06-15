@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Tutorklik.Models
+namespace Tutorklik.Models.ModelsDto
 {
     public class CommentDto
     {
