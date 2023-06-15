@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.Text;
 using Tutorklik.Data;
 using Tutorklik.Models;
+using Tutorklik.Models.ModelsDto;
 
 namespace Tutorklik.Controllers
 {
@@ -30,10 +31,10 @@ namespace Tutorklik.Controllers
         {
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
-            //if (await _context.Users.FirstOrDefaultAsync(x => x.UserName == request.UserName) == null)
-            //{
-            //    return BadRequest("User with this username is exist");
-            //}
+            if (await _context.Users.FirstOrDefaultAsync(x => x.UserName == request.UserName) != null)
+            {
+                return BadRequest("User with this username is exist");
+            }
             _context.Users.Add(new User()
             {
                 UserName = request.UserName,

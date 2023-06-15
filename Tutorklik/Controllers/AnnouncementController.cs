@@ -8,6 +8,7 @@ using System.Security.Cryptography.Xml;
 using System.Text;
 using Tutorklik.Data;
 using Tutorklik.Models;
+using Tutorklik.Models.ModelsDto;
 
 namespace Tutorklik.Controllers
 {
@@ -29,6 +30,7 @@ namespace Tutorklik.Controllers
             var listOfAnnoucments = await _context.Annoucements.Include(x => x.Author).Include(x => x.Comments).ToListAsync();   
             return Ok(listOfAnnoucments.Select(x => (AnnouncementDto)x).ToList());
         }
+
         [HttpGet("GetAnnouncement")]
         public async Task<ActionResult<AnnouncementDto>> GetAnnoucements(int id)
         {
@@ -37,7 +39,23 @@ namespace Tutorklik.Controllers
             {
                 return BadRequest("Announcement with this id is not found");
             }
-            return (AnnouncementDto)announcement;
+            return Ok((AnnouncementDto)announcement);
+        }
+
+        [HttpPost("EditAnnouncement")]
+        public async Task<ActionResult<AnnouncementDto>> EditAnnouncement(AnnouncementDto announcement)
+        {
+            var announcementDb = _context.Annoucements.Include(x => x.Author).Include(x => x.Comments).FirstOrDefault(x => x.AnnouncementId == announcement.AnnoucementId);
+            if (announcementDb == null)
+            {
+                return BadRequest("Announcement with this id is not found");
+            }
+
+            announcementDb.AnnouncementName = announcement.AnnoucementName;
+            announcementDb.AnnouncementDescription = announcement.AnnoucementDescription;
+
+            await _context.SaveChangesAsync();
+            return Ok(announcementDb);
         }
     }
 }

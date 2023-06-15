@@ -7,7 +7,7 @@ using System.Security.Claims;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using Tutorklik.Data;
-using Tutorklik.Models;
+using Tutorklik.Models.ModelsDto;
 
 namespace Tutorklik.Controllers
 {
@@ -24,16 +24,24 @@ namespace Tutorklik.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<UserDto>>> GetUser()
+        public async Task<ActionResult<UserDto>> GetUser(int id)
         {
-            var listOfAnnoucments = await _context.Users.ToListAsync();
-            return Ok(listOfAnnoucments.Select(x => (UserDto)x).ToList());
+            var userDb = await _context.Users.FirstOrDefaultAsync(x => x.UserId == id);
+            if ( userDb == null)
+            {
+                return BadRequest("Not found user");
+            }
+            return Ok((UserDto)userDb);
         }
 
         [HttpPost]
         public async Task<ActionResult<UserDto>> ChangeUser(UserDto user)
         {
             var userDb = await _context.Users.FirstOrDefaultAsync(x => x.UserId == user.UserId);
+            if (userDb == null)
+            {
+                return BadRequest("Not found user");
+            }
             userDb.UserName = user.UserName;
             userDb.Email = user.Email;
             userDb.ProfileImage = user.ProfileImage;
@@ -46,8 +54,9 @@ namespace Tutorklik.Controllers
         {
             var userDb = await _context.Users.FirstOrDefaultAsync(x => x.UserId == userId);
             _context.Users.Remove(userDb);
-            //do not know is it good
+            // do not know is it good
             await _context.SaveChangesAsync();
+            // think what function should return
             return Ok(userId);
         }
     }
