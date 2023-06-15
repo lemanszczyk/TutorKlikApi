@@ -30,6 +30,17 @@ namespace Tutorklik.Controllers
             return Ok(commentDb);
         }
 
+        [HttpPost("AddComment")]
+        public async Task<ActionResult<CommentDto>> AddComment(CommentDto comment)
+        {
+            // Need to convert to commentDto to comment, need to do it in every  
+
+            _context.Add(comment);
+            await _context.SaveChangesAsync();
+
+            return Ok(comment);
+        }
+
         [HttpPost("EditComment")]
         public async Task<ActionResult<CommentDto>> EditComment(CommentDto comment)
         {
