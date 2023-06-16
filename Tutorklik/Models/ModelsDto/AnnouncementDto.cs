@@ -14,7 +14,7 @@ namespace Tutorklik.Models.ModelsDto
         [MaxLength(5000)]
         public string AnnoucementDescription { get; set; }
         public string? Tags { get; set; }
-        public List<Tuple<int, decimal>> CommentsIdAndRate { get; set; }
+        public List<CommentDto> Comments { get; set; }
         [Required]
         public UserDto Author { get; set; }
 
@@ -26,7 +26,7 @@ namespace Tutorklik.Models.ModelsDto
                 AnnoucementName = announcement.AnnouncementName,
                 AnnoucementDescription = announcement.AnnouncementDescription,
                 Tags = announcement.Tags,
-                CommentsIdAndRate = announcement.Comments.Select(x => new Tuple<int, decimal>(x.CommentId, x.Rate)).ToList(),
+                Comments = announcement.Comments.Select(x => (CommentDto)x).ToList(),
                 Author = announcement.Author,
             };
         }
