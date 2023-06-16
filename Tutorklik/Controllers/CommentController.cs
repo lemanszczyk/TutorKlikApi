@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Security.Claims;
 using Tutorklik.Data;
+using Tutorklik.Models;
 using Tutorklik.Models.ModelsDto;
 
 namespace Tutorklik.Controllers
@@ -21,7 +25,7 @@ namespace Tutorklik.Controllers
         public async Task<ActionResult<CommentDto>> GetComment(int id)
         {
             var commentDb = await _context.Comments.FirstOrDefaultAsync(x => x.CommentId == id);
-
+            
             if (commentDb == null)
             {
                 return BadRequest("There is no comments in this announcement");
@@ -30,12 +34,21 @@ namespace Tutorklik.Controllers
             return Ok(commentDb);
         }
 
-        [HttpPost("AddComment")]
+        [HttpPost("AddComment"), Authorize]
         public async Task<ActionResult<CommentDto>> AddComment(CommentDto comment)
         {
-            // Need to convert to commentDto to comment, need to do it in every  
+            // Need to convert to commentDto to comment, need to do it in every
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var user = _context.Users.FirstOrDefault(x => x.UserName == userName);
 
-            _context.Add(comment);
+            var newComment = new Comment()
+            {
+                Description = comment.Description,
+                Rate = comment.Rate,
+                Author = user!,
+                // need to add AnnoucemntId to comment model and dtomodel
+            };
+            _context.Comments.Add(newComment);
             await _context.SaveChangesAsync();
 
             return Ok(comment);
