@@ -89,6 +89,8 @@ namespace Tutorklik.Controllers
             }
 
             _context.Annoucements.Remove(announcementDb);
+
+            await _context.SaveChangesAsync();
             return Ok(announcementDb);
         }
     }

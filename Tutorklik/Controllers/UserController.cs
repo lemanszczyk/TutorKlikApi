@@ -24,7 +24,7 @@ namespace Tutorklik.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet]
+        [HttpGet("GetUser")]
         public async Task<ActionResult<UserDto>> GetUser(int id)
         {
             var userDb = await _context.Users.FirstOrDefaultAsync(x => x.UserId == id);
@@ -35,8 +35,8 @@ namespace Tutorklik.Controllers
             return Ok((UserDto)userDb);
         }
 
-        [HttpPost, Authorize]
-        public async Task<ActionResult<UserDto>> ChangeUser(UserDto user)
+        [HttpPost("EditUser"), Authorize]
+        public async Task<ActionResult<UserDto>> EditUser(UserDto user)
         {
             var userDb = await _context.Users.FirstOrDefaultAsync(x => x.UserId == user.UserId);
 
@@ -59,7 +59,7 @@ namespace Tutorklik.Controllers
             return Ok(userDb);
         }
 
-        [HttpDelete, Authorize]
+        [HttpDelete("DeleteUser"), Authorize]
         public async Task<ActionResult<int>> DeleteUser(int userId)
         {
             var userDb = await _context.Users.FirstOrDefaultAsync(x => x.UserId == userId);

@@ -81,6 +81,7 @@ namespace Tutorklik.Controllers
             }
 
             _context.Comments.Remove(commentDb);
+            await _context.SaveChangesAsync();
             return Ok(commentDb);
         }
     }
