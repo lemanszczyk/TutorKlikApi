@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -34,13 +35,22 @@ namespace Tutorklik.Controllers
             return Ok((UserDto)userDb);
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         public async Task<ActionResult<UserDto>> ChangeUser(UserDto user)
         {
             var userDb = await _context.Users.FirstOrDefaultAsync(x => x.UserId == user.UserId);
+
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var userJWT = _context.Users.FirstOrDefault(x => x.UserName == userName);
+
             if (userDb == null)
             {
                 return BadRequest("Not found user");
+            }
+
+            if (userJWT != userDb)
+            {
+                return BadRequest("Only owner of this account can change its data");
             }
             userDb.UserName = user.UserName;
             userDb.Email = user.Email;
@@ -49,10 +59,24 @@ namespace Tutorklik.Controllers
             return Ok(userDb);
         }
 
-        [HttpDelete]
+        [HttpDelete, Authorize]
         public async Task<ActionResult<int>> DeleteUser(int userId)
         {
             var userDb = await _context.Users.FirstOrDefaultAsync(x => x.UserId == userId);
+
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var userJWT = _context.Users.FirstOrDefault(x => x.UserName == userName);
+
+            if (userDb == null)
+            {
+                return BadRequest("Not found user");
+            }
+
+            if (userJWT != userDb)
+            {
+                return BadRequest("Only owner of this account can change its data");
+            }
+
             _context.Users.Remove(userDb);
             // do not know is it good
             await _context.SaveChangesAsync();

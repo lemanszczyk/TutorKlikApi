@@ -37,7 +37,6 @@ namespace Tutorklik.Controllers
         [HttpPost("AddComment"), Authorize]
         public async Task<ActionResult<CommentDto>> AddComment(CommentDto comment)
         {
-            // Need to convert to commentDto to comment, need to do it in every
             var userName = User.FindFirst(ClaimTypes.Name)?.Value;
             var user = _context.Users.FirstOrDefault(x => x.UserName == userName);
 
@@ -46,7 +45,7 @@ namespace Tutorklik.Controllers
                 Description = comment.Description,
                 Rate = comment.Rate,
                 Author = user!,
-                // need to add AnnoucemntId to comment model and dtomodel
+                AnnouncementId = comment.AnnouncementId,
             };
             _context.Comments.Add(newComment);
             await _context.SaveChangesAsync();
@@ -54,7 +53,7 @@ namespace Tutorklik.Controllers
             return Ok(comment);
         }
 
-        [HttpPost("EditComment")]
+        [HttpPost("EditComment"), Authorize]
         public async Task<ActionResult<CommentDto>> EditComment(CommentDto comment)
         {
             var commentDb = await _context.Comments.FirstOrDefaultAsync(x => x.CommentId == comment.CommentId);
@@ -71,7 +70,7 @@ namespace Tutorklik.Controllers
             return Ok(commentDb);
         }
 
-        [HttpDelete("DeleteComment")]
+        [HttpDelete("DeleteComment"), Authorize]
         public async Task<ActionResult<CommentDto>> DeleteComment(int id)
         {
             var commentDb = await _context.Comments.FirstOrDefaultAsync(x => x.CommentId == id);

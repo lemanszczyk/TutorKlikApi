@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -42,7 +43,26 @@ namespace Tutorklik.Controllers
             return Ok((AnnouncementDto)announcement);
         }
 
-        [HttpPost("EditAnnouncement")]
+        [HttpPost("AddAnnouncement"), Authorize(Roles = "Tutor")]
+        public async Task<ActionResult<AnnouncementDto>> AddAnnoucement(AnnouncementDto announcement)
+        {
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var user = _context.Users.FirstOrDefault(x => x.UserName == userName);
+
+            var newAnnoucement = new Announcement()
+            {
+                AnnouncementName = announcement.AnnoucementName,
+                AnnouncementDescription = announcement.AnnoucementDescription,
+                Tags = announcement.Tags,
+                Author = user!,
+            };
+            _context.Annoucements.Add(newAnnoucement);
+            await _context.SaveChangesAsync();
+
+            return Ok(announcement);
+        }
+
+        [HttpPost("EditAnnouncement"), Authorize(Roles = "Tutor")]
         public async Task<ActionResult<AnnouncementDto>> EditAnnouncement(AnnouncementDto announcement)
         {
             var announcementDb = _context.Annoucements.Include(x => x.Author).Include(x => x.Comments).FirstOrDefault(x => x.AnnouncementId == announcement.AnnoucementId);
@@ -55,6 +75,20 @@ namespace Tutorklik.Controllers
             announcementDb.AnnouncementDescription = announcement.AnnoucementDescription;
 
             await _context.SaveChangesAsync();
+            return Ok(announcementDb);
+        }
+
+        [HttpDelete("DeleteAnnouncement"), Authorize]
+        public async Task<ActionResult<AnnouncementDto>> DeleteAnnouncement(int id)
+        {
+            var announcementDb = await _context.Annoucements.FirstOrDefaultAsync(x => x.AnnouncementId == id);
+
+            if (announcementDb == null)
+            {
+                return BadRequest("There is no announcement");
+            }
+
+            _context.Annoucements.Remove(announcementDb);
             return Ok(announcementDb);
         }
     }
