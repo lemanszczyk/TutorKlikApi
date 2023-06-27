@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Tutorklik.Models
+namespace Tutorklik.Models.ModelsDto
 {
     public class CommentDto
     {
@@ -12,6 +12,10 @@ namespace Tutorklik.Models
         [Range(0, 5)]
         public decimal Rate { get; set; }
         public UserDto Author { get; set; }
+
+        [Required]
+        public  int AnnouncementId { get; set; }
+
         public static implicit operator CommentDto(Comment comment)
         {
             return new CommentDto
@@ -20,6 +24,7 @@ namespace Tutorklik.Models
                 Description = comment.Description,
                 Rate = comment.Rate,
                 Author = comment.Author,
+                AnnouncementId = comment.AnnouncementId,
             };
         }
     }

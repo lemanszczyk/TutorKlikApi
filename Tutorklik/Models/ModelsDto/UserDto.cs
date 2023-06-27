@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Reflection;
 
-namespace Tutorklik.Models
+namespace Tutorklik.Models.ModelsDto
 {
     public class UserDto
     {
@@ -20,7 +20,8 @@ namespace Tutorklik.Models
 
         public static implicit operator UserDto(User user)
         {
-            return new UserDto { 
+            return new UserDto
+            {
                 UserId = user.UserId,
                 UserName = user.UserName,
                 Email = user.Email,

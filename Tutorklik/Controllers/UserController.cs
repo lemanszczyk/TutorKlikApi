@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -7,7 +8,7 @@ using System.Security.Claims;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using Tutorklik.Data;
-using Tutorklik.Models;
+using Tutorklik.Models.ModelsDto;
 
 namespace Tutorklik.Controllers
 {
@@ -23,28 +24,34 @@ namespace Tutorklik.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<UserDto>>> GetUser()
-        {
-            var listOfAnnoucments = await _context.Users.ToListAsync();
-            return Ok(listOfAnnoucments.Select(x => (UserDto)x).ToList());
-        }
-
         [HttpGet("GetUser")]
-        public async Task<ActionResult<UserDto>> GetUserById(int userId)
+        public async Task<ActionResult<UserDto>> GetUser(int id)
         {
-            var userDb = await _context.Users.FirstOrDefaultAsync(x => x.UserId == userId);
-            if (userDb == null)
+            var userDb = await _context.Users.FirstOrDefaultAsync(x => x.UserId == id);
+            if ( userDb == null)
             {
-                return BadRequest("User with this id is not found");
+                return BadRequest("Not found user");
             }
-            return (UserDto)userDb;
+            return Ok((UserDto)userDb);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<UserDto>> ChangeUser(UserDto user)
+        [HttpPost("EditUser"), Authorize]
+        public async Task<ActionResult<UserDto>> EditUser(UserDto user)
         {
             var userDb = await _context.Users.FirstOrDefaultAsync(x => x.UserId == user.UserId);
+
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var userJWT = _context.Users.FirstOrDefault(x => x.UserName == userName);
+
+            if (userDb == null)
+            {
+                return BadRequest("Not found user");
+            }
+
+            if (userJWT != userDb)
+            {
+                return BadRequest("Only owner of this account can change its data");
+            }
             userDb.UserName = user.UserName;
             userDb.Email = user.Email;
             userDb.ProfileImage = user.ProfileImage;
@@ -52,29 +59,28 @@ namespace Tutorklik.Controllers
             return Ok(userDb);
         }
 
-        [HttpPut]
-        public async Task<ActionResult<List<User>>> UpdateUser(UserDto user)
-        {
-            var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.UserId == user.UserId);
-            if (dbUser == null)
-            {
-                return BadRequest("User with this id not found for update");
-            }
-            dbUser.UserName = user.UserName;
-            dbUser.Email = user.Email;
-            dbUser.UserType = user.UserType;
-            dbUser.ProfileImage = user.ProfileImage;
-            await _context.SaveChangesAsync();
-            return Ok(await _context.SuperHeroes.ToListAsync());
-        }
-
-        [HttpDelete]
+        [HttpDelete("DeleteUser"), Authorize]
         public async Task<ActionResult<int>> DeleteUser(int userId)
         {
             var userDb = await _context.Users.FirstOrDefaultAsync(x => x.UserId == userId);
+
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var userJWT = _context.Users.FirstOrDefault(x => x.UserName == userName);
+
+            if (userDb == null)
+            {
+                return BadRequest("Not found user");
+            }
+
+            if (userJWT != userDb)
+            {
+                return BadRequest("Only owner of this account can change its data");
+            }
+
             _context.Users.Remove(userDb);
-            //do not know is it good
+            // do not know is it good
             await _context.SaveChangesAsync();
+            // think what function should return
             return Ok(userId);
         }
     }
