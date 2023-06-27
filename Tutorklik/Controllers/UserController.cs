@@ -30,6 +30,17 @@ namespace Tutorklik.Controllers
             return Ok(listOfAnnoucments.Select(x => (UserDto)x).ToList());
         }
 
+        [HttpGet("GetUser")]
+        public async Task<ActionResult<UserDto>> GetUserById(int userId)
+        {
+            var userDb = await _context.Users.FirstOrDefaultAsync(x => x.UserId == userId);
+            if (userDb == null)
+            {
+                return BadRequest("User with this id is not found");
+            }
+            return (UserDto)userDb;
+        }
+
         [HttpPost]
         public async Task<ActionResult<UserDto>> ChangeUser(UserDto user)
         {
@@ -39,6 +50,22 @@ namespace Tutorklik.Controllers
             userDb.ProfileImage = user.ProfileImage;
             await _context.SaveChangesAsync();
             return Ok(userDb);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<List<User>>> UpdateUser(UserDto user)
+        {
+            var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.UserId == user.UserId);
+            if (dbUser == null)
+            {
+                return BadRequest("User with this id not found for update");
+            }
+            dbUser.UserName = user.UserName;
+            dbUser.Email = user.Email;
+            dbUser.UserType = user.UserType;
+            dbUser.ProfileImage = user.ProfileImage;
+            await _context.SaveChangesAsync();
+            return Ok(await _context.SuperHeroes.ToListAsync());
         }
 
         [HttpDelete]
