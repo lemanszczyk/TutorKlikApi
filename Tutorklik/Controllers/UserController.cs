@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using Tutorklik.Data;
+using Tutorklik.Models;
 using Tutorklik.Models.ModelsDto;
 
 namespace Tutorklik.Controllers
@@ -82,6 +83,22 @@ namespace Tutorklik.Controllers
             await _context.SaveChangesAsync();
             // think what function should return
             return Ok(userId);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<List<User>>> UpdateUser(UserDto user)
+        {
+            var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.UserId == user.UserId);
+            if (dbUser == null)
+            {
+                return BadRequest("User with this id not found for update");
+            }
+            dbUser.UserName = user.UserName;
+            dbUser.Email = user.Email;
+            dbUser.UserType = user.UserType;
+            dbUser.ProfileImage = user.ProfileImage;
+            await _context.SaveChangesAsync();
+            return Ok(await _context.SuperHeroes.ToListAsync());
         }
     }
 }
