@@ -11,10 +11,9 @@ namespace Tutorklik.Models.ModelsDto
 
         [Range(0, 5)]
         public decimal Rate { get; set; }
-        public UserDto Author { get; set; }
+        public UserDto? Author { get; set; }
 
-        [Required]
-        public  int AnnouncementId { get; set; }
+        [Required] public  int AnnouncementId { get; set; }
 
         public static implicit operator CommentDto(Comment comment)
         {
