@@ -44,7 +44,7 @@ namespace Tutorklik.Controllers
             });
 
             await _context.SaveChangesAsync();
-            return Ok(await _context.Users.ToListAsync());
+            return Ok("User has been succesfully created, now you can log in");
         }
 
         [HttpPost("login")]
@@ -65,11 +65,6 @@ namespace Tutorklik.Controllers
             return Ok(token);
         }
 
-        //[HttpGet, Authorize]
-        //public ActionResult<string> GetMe()
-        //{
-        //    var userName = _context.
-        //}
         private string CreateToken(User user)
         {
             var a = user.UserType;

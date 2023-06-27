@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography.Xml;
 using System.Text;
@@ -47,13 +48,13 @@ namespace Tutorklik.Controllers
         public async Task<ActionResult<AnnouncementDto>> AddAnnoucement(AnnouncementDto announcement)
         {
             var userName = User.FindFirst(ClaimTypes.Name)?.Value;
-            var user = _context.Users.FirstOrDefault(x => x.UserName == userName);
+            var user = _context.Users.FirstOrDefault(x => x.UserName == userName);          
 
             var newAnnoucement = new Announcement()
             {
                 AnnouncementName = announcement.AnnoucementName,
                 AnnouncementDescription = announcement.AnnoucementDescription,
-                Tags = announcement.Tags,
+                Tags = String.Join( ".", announcement.Tags),
                 Author = user!,
             };
             _context.Annoucements.Add(newAnnoucement);
@@ -73,6 +74,7 @@ namespace Tutorklik.Controllers
 
             announcementDb.AnnouncementName = announcement.AnnoucementName;
             announcementDb.AnnouncementDescription = announcement.AnnoucementDescription;
+            announcementDb.Tags = String.Join( ".", announcement.Tags);
 
             await _context.SaveChangesAsync();
             return Ok(announcementDb);
