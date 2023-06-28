@@ -6,17 +6,17 @@ namespace Tutorklik.Models.ModelsDto
     {
         public int AnnoucementId { get; set; }
 
-        [Required]
+        //[Required]
         [MaxLength(300)]
         public string AnnoucementName { get; set; }
 
-        [Required]
+        //[Required]
         [MaxLength(5000)]
         public string AnnoucementDescription { get; set; }
         public List<string?> Tags { get; set; }
-        public List<CommentDto> Comments { get; set; }
-        [Required]
-        public UserDto Author { get; set; }
+        public List<CommentDto>? Comments { get; set; }
+        
+        public UserDto? Author { get; set; }
 
         public static implicit operator AnnouncementDto(Announcement announcement)
         {           
