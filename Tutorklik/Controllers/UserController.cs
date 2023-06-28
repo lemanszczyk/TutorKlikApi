@@ -26,11 +26,13 @@ namespace Tutorklik.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet("GetUser")]
-        public async Task<ActionResult<UserDto>> GetUser(int id)
+        [HttpGet("GetUser"), Authorize]
+        public async Task<ActionResult<UserDto>> GetUser()
         {
-            var userDb = await _context.Users.FirstOrDefaultAsync(x => x.UserId == id);
-            if ( userDb == null)
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var userDb = await _context.Users.FirstOrDefaultAsync(x => x.UserName == userName);
+
+            if (userDb == null)
             {
                 return BadRequest("Not found user");
             }
@@ -86,7 +88,7 @@ namespace Tutorklik.Controllers
             return Ok(userId);
         }
 
-        [HttpPut]
+        [HttpPut, Authorize]
         public async Task<ActionResult<List<User>>> UpdateUser(UserDto user)
         {
             var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.UserId == user.UserId);
@@ -102,7 +104,7 @@ namespace Tutorklik.Controllers
             return Ok((UserDto)dbUser);
         }
 
-        [HttpPut("UpdatePassword")]
+        [HttpPut("UpdatePassword"), Authorize]
         public async Task<ActionResult<List<User>>> UpdatePassword(UserPasswordDto user)
         {
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(user.Password);
