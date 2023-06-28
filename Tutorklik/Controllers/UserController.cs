@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -98,7 +99,23 @@ namespace Tutorklik.Controllers
             dbUser.UserType = user.UserType;
             dbUser.ProfileImage = user.ProfileImage;
             await _context.SaveChangesAsync();
-            return Ok(await _context.SuperHeroes.ToListAsync());
+            return Ok((UserDto)dbUser);
+        }
+
+        [HttpPut("UpdatePassword")]
+        public async Task<ActionResult<List<User>>> UpdatePassword(UserPasswordDto user)
+        {
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(user.Password);
+
+            var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.UserId == user.UserId);
+            if (dbUser == null)
+            {
+                return BadRequest("Can't update password for non-existing user!");
+            }
+
+            dbUser.PasswordHash = passwordHash;
+            await _context.SaveChangesAsync();
+            return Ok(user);
         }
     }
 }
