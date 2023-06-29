@@ -40,11 +40,16 @@ namespace Tutorklik.Controllers
             var userName = User.FindFirst(ClaimTypes.Name)?.Value;
             var user = _context.Users.FirstOrDefault(x => x.UserName == userName);
 
+            if(user == null)
+            {
+                return BadRequest("User does not exist");
+            }
+
             var newComment = new Comment()
             {
                 Description = comment.Description,
                 Rate = comment.Rate,
-                Author = user!,
+                Author = user,
                 AnnouncementId = comment.AnnouncementId,
             };
             _context.Comments.Add(newComment);

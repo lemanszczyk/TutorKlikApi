@@ -40,7 +40,8 @@ namespace Tutorklik.Controllers
         [HttpGet("GetAnnouncement")]
         public async Task<ActionResult<AnnouncementDto>> GetAnnoucement(int id)
         {
-            var announcement = _context.Annoucements.Include(x  => x.Author).Include(x => x.Comments).FirstOrDefault(x => x.AnnouncementId == id);
+            var announcement = _context.Annoucements.Include(x  => x.Author).Include(x => x.Comments).Include("Comments.Author").FirstOrDefault(x => x.AnnouncementId == id);
+
             if (announcement == null)
             {
                 return BadRequest("Announcement with this id is not found");
