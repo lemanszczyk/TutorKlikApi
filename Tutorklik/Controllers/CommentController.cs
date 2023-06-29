@@ -84,5 +84,20 @@ namespace Tutorklik.Controllers
             await _context.SaveChangesAsync();
             return Ok(commentDb);
         }
+
+        [HttpDelete("DeleteComments")]
+        public async Task<ActionResult<List<CommentDto>>> DeleteComments(int id)
+        {
+            var commentsDb = await _context.Comments.Where(x => x.AnnouncementId == id).ToListAsync();
+
+            if (commentsDb == null || commentsDb.Count == 0)
+            {
+                return BadRequest("There are no comments in this announcement");
+            }
+
+            _context.Comments.RemoveRange(commentsDb);
+            await _context.SaveChangesAsync();
+            return Ok(commentsDb);
+        }
     }
 }
