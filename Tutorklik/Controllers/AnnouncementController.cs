@@ -29,7 +29,11 @@ namespace Tutorklik.Controllers
         [HttpGet("GetAnnouncements")]
         public async Task<ActionResult<List<AnnouncementDto>>> GetAnnoucements()
         {
-            var listOfAnnoucments = await _context.Annoucements.Include(x => x.Author).Include(x => x.Comments).ToListAsync();   
+            var listOfAnnoucments = await _context.Annoucements.Include(x => x.Author).Include(x => x.Comments).ToListAsync();
+            if (listOfAnnoucments == null)
+            {
+                return BadRequest("No announcements to display");
+            }
             return Ok(listOfAnnoucments.Select(x => (AnnouncementDto)x).ToList());
         }
 

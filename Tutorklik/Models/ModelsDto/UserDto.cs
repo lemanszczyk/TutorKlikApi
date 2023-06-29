@@ -18,8 +18,12 @@ namespace Tutorklik.Models.ModelsDto
         public string UserType { get; set; }
         public string? ProfileImage { get; set; }
 
-        public static implicit operator UserDto(User user)
+        public static explicit operator UserDto(User user)
         {
+            if (user == null)
+            {
+                return null;
+            }
             return new UserDto
             {
                 UserId = user.UserId,

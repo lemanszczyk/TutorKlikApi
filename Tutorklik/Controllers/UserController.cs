@@ -30,7 +30,13 @@ namespace Tutorklik.Controllers
         public async Task<ActionResult<UserDto>> GetUser()
         {
             var userName = User.FindFirst(ClaimTypes.Name)?.Value;
-            var userDb = await _context.Users.FirstOrDefaultAsync(x => x.UserName == userName);
+
+            if (userName ==  null)
+            {
+                return BadRequest("User Not Found");
+            }
+
+            var userDb =  _context.Users.FirstOrDefault(x => x.UserName == userName);
 
             if (userDb == null)
             {

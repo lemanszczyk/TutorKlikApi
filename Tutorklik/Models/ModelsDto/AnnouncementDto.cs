@@ -18,7 +18,7 @@ namespace Tutorklik.Models.ModelsDto
         
         public UserDto? Author { get; set; }
 
-        public static implicit operator AnnouncementDto(Announcement announcement)
+        public static explicit operator AnnouncementDto(Announcement announcement)
         {           
             return new AnnouncementDto
             {
@@ -27,7 +27,7 @@ namespace Tutorklik.Models.ModelsDto
                 AnnoucementDescription = announcement.AnnouncementDescription,
                 Tags = announcement.Tags.Split('.').ToList<string?>(),
                 Comments = announcement.Comments.Select(x => (CommentDto)x).ToList(),
-                Author = announcement.Author,
+                Author = (UserDto)announcement.Author,
             };
         }
     }

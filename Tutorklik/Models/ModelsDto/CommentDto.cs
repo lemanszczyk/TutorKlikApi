@@ -22,7 +22,7 @@ namespace Tutorklik.Models.ModelsDto
                 CommentId = comment.CommentId,
                 Description = comment.Description,
                 Rate = comment.Rate,
-                Author = comment.Author,
+                Author = (UserDto)comment.Author,
                 AnnouncementId = comment.AnnouncementId,
             };
         }
