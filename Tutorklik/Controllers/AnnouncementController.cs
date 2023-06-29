@@ -29,7 +29,7 @@ namespace Tutorklik.Controllers
         [HttpGet("GetAnnouncements")]
         public async Task<ActionResult<List<AnnouncementDto>>> GetAnnoucements()
         {
-            var listOfAnnoucments = await _context.Annoucements.Include(x => x.Author).Include(x => x.Comments).ToListAsync();
+            var listOfAnnoucments = await _context.Annoucements.Include(x => x.Author).Include(x => x.Comments).Include("Comments.Author").ToListAsync();
             if (listOfAnnoucments == null)
             {
                 return BadRequest("No announcements to display");
@@ -54,7 +54,7 @@ namespace Tutorklik.Controllers
         {
             var userName = User.FindFirst(ClaimTypes.Name)?.Value;
 
-            var listOfAnnoucments = await _context.Annoucements.Where(x => x.Author.UserName == userName).Include(x => x.Author).Include(x => x.Comments).ToListAsync();
+            var listOfAnnoucments = await _context.Annoucements.Where(x => x.Author.UserName == userName).Include(x => x.Author).Include(x => x.Comments).Include("Comments.Author").ToListAsync();
             return Ok(listOfAnnoucments.Select(x => (AnnouncementDto)x).ToList());
         }
 
@@ -80,7 +80,7 @@ namespace Tutorklik.Controllers
         [HttpPost("EditAnnouncement"), Authorize(Roles = "Tutor")]
         public async Task<ActionResult<AnnouncementDto>> EditAnnouncement(AnnouncementDto announcement)
         {
-            var announcementDb = _context.Annoucements.Include(x => x.Author).Include(x => x.Comments).FirstOrDefault(x => x.AnnouncementId == announcement.AnnoucementId);
+            var announcementDb = _context.Annoucements.Include(x => x.Author).Include(x => x.Comments).Include("Comments.Author").FirstOrDefault(x => x.AnnouncementId == announcement.AnnoucementId);
             if (announcementDb == null)
             {
                 return BadRequest("Announcement with this id is not found");
