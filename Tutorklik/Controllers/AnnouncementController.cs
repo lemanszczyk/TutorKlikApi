@@ -44,6 +44,15 @@ namespace Tutorklik.Controllers
             return Ok((AnnouncementDto)announcement);
         }
 
+        [HttpGet("GetUserAnnouncements"), Authorize(Roles = "Tutor")]
+        public async Task<ActionResult<List<AnnouncementDto>>> GetUserAnnouncements()
+        {
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+
+            var listOfAnnoucments = await _context.Annoucements.Where(x => x.Author.UserName == userName).Include(x => x.Author).Include(x => x.Comments).ToListAsync();
+            return Ok(listOfAnnoucments.Select(x => (AnnouncementDto)x).ToList());
+        }
+
         [HttpPost("AddAnnouncement"), Authorize(Roles = "Tutor")]
         public async Task<ActionResult<AnnouncementDto>> AddAnnoucement(AnnouncementDto announcement)
         {
